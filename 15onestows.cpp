@@ -29,19 +29,7 @@ class binary
 		void displayBinary();
 		void onesComplement();
 		void twoscomplement();
-		binary operator +(binary n1);
-        bool add_bitwise(bool val)
-        {
-            node *nodee=new node(val);
-            if(start==NULL)     {  start=nodee;}
-            else
-            {
-                nodee->next=start;
-                start->prev=nodee;
-                start=nodee;
-            }
-            return true;
-        }
+		
 };
 
 void binary::binary_number(int no)
@@ -120,41 +108,6 @@ void binary::twoscomplement()
     displayBinary();
 }
 
-binary binary::operator +(binary n1)
-{
-	binary sum;
-	node *a=start;
-	node *b=n1.start;
-	bool carry=false;
-	while(a->next!=NULL)
-		a=a->next;
-	while(b->next!=NULL)
-		b=b->next;
-	
-	while(a!=NULL && b!=NULL)
-	{
-		sum.add_bitwise((a->n)^(b->n)^carry);
-		carry=((a->n&& b->n) || (a->n&& carry) || (b->n && carry));
-		
-		a=a->prev;
-		b=b->prev;
-	}
-
-	while(a!=NULL)
-	{
-		sum.add_bitwise(a->n^carry);
-		a=a->prev;
-	}
-
-	while(b!=NULL)
-	{
-		sum.add_bitwise(b->n^carry);
-		b=b->prev;
-	}
-
-	sum.add_bitwise(carry);
-	return sum;
-}
 
 int main()
 {
@@ -164,7 +117,7 @@ int main()
 	do
 	{
 		cout<<"\n\n=========Binary Number Operations========\n";
-		cout<<"1. Generate binary\n2.One's Complement\n3.Two's Complement\n4. Addition\n0.Exit\n\nEnter your choice: ";
+		cout<<"1. Generate binary\n2.One's Complement\n3.Two's Complement\n0.Exit\n\nEnter your choice: ";
 		cin>>choice;
 		switch(choice)
 		{
@@ -191,16 +144,7 @@ int main()
 					cout<<"\nTwos complement; ";
 					n1.twoscomplement();
 					break;
-			case 4: cout<<"\nEnter Two Numbers: ";
-					cin>>num>>num1;
-					n1.binary_number(num);
-					n2.binary_number(num1);
-					n1.displayBinary();
-					cout<<" + ";
-					n2.displayBinary();
-					cout<<"= ";
-					n3=n1+n2;
-					n3.displayBinary();		
+			
 		}
 
 	}while(choice!=0);
