@@ -30,3 +30,11 @@ def fibonacci(num):
         print("number was not present")
     else:
         print("number was present")
+        
+n=int(input("Enter the no of elements"))
+list=[]
+for i in range(n):
+    temp=int(input())
+    list.append(temp)
+    
+fibonacci(list)
