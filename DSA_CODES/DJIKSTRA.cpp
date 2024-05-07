@@ -1,71 +1,89 @@
 #include <iostream>
 #include <vector>
-#include<queue>
-#include<algorithm>
+#include <queue>
+#include <climits>
+#include <algorithm>
 using namespace std;
 
+void insert(int e, vector<vector<int>>& adj) {
+    for (int i = 0; i < e; i++) {
+        int u, v, wt;
+        cin >> u >> v >> wt;
+        adj[u][v] = wt;
+        adj[v][u] = wt;
+    }
+}
 
-vector<int>shortestpath(int n,vector<vector<int>>&edges){
-        vector<pair<int,int>>adj[n+1];
-        for(auto& it:edges){
-            adj[it[0]].push_back({it[1],it[2]});
-            adj[it[1]].push_back({it[0],it[2]});
+void display(int V, vector<vector<int>>& adj) {
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            cout << adj[i][j] << " ";
         }
-        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;
-        vector<int>dist(n+1,1e9),parent(n+1);
-        for(int i=1;i<=n;i++){
-            parent[i]=i;
-        }
-        dist[0]=0;
-        pq.push({0,0});
-        while(!pq.empty()){
-            auto it=pq.top();
-            int node=it.second;
-            int dis=it.first;
-            pq.pop();
+        cout << endl;
+    }
+}
 
-            for(auto it:adj[node]){
-                int adjnode=it.first;
-                int edW=it.second;
-                if(dis+edW  <dist[adjnode]){
-                    dist[adjnode]=dis+edW;
-                    pq.push({dis+edW ,adjnode});
-                    parent[adjnode]=node;
-
+pair<vector<int>, vector<int>> djikstra(vector<vector<int>>& adj, int src, int dest, int v) {
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, src});
+    vector<int> dist(v, INT_MAX);
+    vector<int> par(v);
+    for (int i = 0; i < v; i++) {
+        par[i] = i;
+    }
+    dist[src] = 0;
+    while (!pq.empty()) {
+        int node = pq.top().second;
+        int dis = pq.top().first;
+        pq.pop();
+        for (int i = 0; i < v; i++) {
+            if (adj[node][i] != 0) {
+                int adjn = i;
+                int edw = adj[node][i];
+                if (edw + dis < dist[adjn]) {
+                    dist[adjn] = dis + edw;
+                    pq.push({dist[adjn], adjn});
+                    par[adjn] = node;
                 }
             }
         }
-        if(dist[n]==1e9){
-            return {-1};
-        }
-        vector<int>path;
-        int node=n;
-        while(parent[node] != node){
-            path.push_back(node);
-            node=parent[node];
-        }
-        path.push_back(0);
-        reverse(path.begin(),path.end());
-        return path;
+    }
+    if (dist[dest] == INT_MAX) {
+        return {{}, {}};
+    }
+    vector<int> ans;
+    int node = dest;
+    while (par[node] != node) {
+        ans.push_back(node);
+        node = par[node];
+    }
+    ans.push_back(src);
+    reverse(ans.begin(), ans.end());
+    return {dist, ans};
 }
 
-int main(){
-    int n;
-    int e;
-    cin>>n>>e;
-    
-    vector<vector<int>> edges;
-    for (int i = 0; i < e; i++) {
-        int u, v, w;
-        cin >> u >> v >> w;
-        edges.push_back({u, v, w});
+int main() {
+    int V, E;
+    cout << "Enter number of offices and lines: ";
+    cin >> V >> E;
+    vector<vector<int>> adj(V, vector<int>(V, 0));
+    insert(E, adj);
+    cout << "Enter src and dest: ";
+    int s, d;
+    cin >> s >> d;
+    pair<vector<int>, vector<int>> p = djikstra(adj, s, d, V);
+    vector<int> dist = p.first;
+    vector<int> path = p.second;
+    cout << "Distances: ";
+    for (int i = 0; i < V; i++) {
+        if (dist[i] != INT_MAX) {
+            cout << dist[i] << " ";
+        }
     }
-
-    vector<int> result = shortestpath(n, edges);
-    for (int node : result) {
-        cout << node << " ";
+    cout << endl << "Path is: ";
+    for (int i = 0; i < path.size(); i++) {
+        cout << path[i] << " ";
     }
-    cout << endl;
     return 0;
-
 }
+
